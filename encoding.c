@@ -28,15 +28,14 @@ TreeNode dequeue(PriorityQueue *p);
 bool isEmpty(PriorityQueue *p);
 TreeNode *encodeText(PriorityQueue *pq);
 void inOrder(TreeNode *root);
-void encodeTree(TreeNode *root, char codes[256], int i);
+void encodeTree(TreeNode *root, char codes[128], int i);
 int length(char *c);
 
-char final_encoded_map[256][256];
+char final_encoded_map[128][128];
 
 int main()
 {
-    // TreeNode *root = NULL;
-    int freq[] = {5, 9, 12, 13, 16, 45};
+    int freq[] = {5, 9, 12, 15  , 16, 45};
     char x = 'a';
     PriorityQueue *pq = (PriorityQueue *)malloc(sizeof(PriorityQueue));
     for (int i = 0; i < 6; i++)
@@ -46,6 +45,9 @@ int main()
         t.freq = freq[i];
         enqueue(pq, t);
     }
+    //! currently taiking hardcoded chars. Later we will take users's file from i/p, read it and then make corresponding freq char pair tuples.
+
+
     // while(! isEmpty(pq))
     // {
     //     TreeNode t = dequeue(pq);
@@ -58,7 +60,7 @@ int main()
     TreeNode *root = encodeText(pq);
     printf("tree made successfully");
 
-    char codes[256];
+    char codes[128];
     encodeTree(root, codes, 0);
     char y = 'a';
     printf("\n\nCodes are - ");
