@@ -28,25 +28,39 @@ TreeNode dequeue(PriorityQueue *p);
 bool isEmpty(PriorityQueue *p);
 TreeNode *encodeText(PriorityQueue *pq);
 void inOrder(TreeNode *root);
-void encodeTree(TreeNode *root, char codes[128], int i);
+void encodeTree(TreeNode *root, char codes[128], int codeptr);
 int length(char *c);
 
 char final_encoded_map[128][128];
 
 int main()
 {
-    int freq[] = {5, 9, 12, 15  , 16, 45};
-    char x = 'a';
+    int freq[128];
+    char ip_string[100000] = "currently taiking hardcoded chars. Later we will take users's file from i/p, read it and then make corresponding freq char pair tuples.";
+
+    for (size_t i = 0; i < 128; i++)
+    {
+        freq[i] = 0;
+    }
+
+    for (size_t i = 0; i < strlen(ip_string); i++)
+    {
+        if (ip_string[i] != '\0')
+            freq[(int)ip_string[i]]++;
+    }
+
     PriorityQueue *pq = (PriorityQueue *)malloc(sizeof(PriorityQueue));
-    for (int i = 0; i < 6; i++)
+    for (size_t i = 0; i < 128; i++)
     {
         Tuple t;
-        t.c = (char)(x++);
-        t.freq = freq[i];
-        enqueue(pq, t);
+        if (freq[i] != 0)
+        {
+            t.c = (char)(i);
+            t.freq = freq[i];
+            enqueue(pq, t);
+        }
     }
     //! currently taiking hardcoded chars. Later we will take users's file from i/p, read it and then make corresponding freq char pair tuples.
-
 
     // while(! isEmpty(pq))
     // {
@@ -62,21 +76,34 @@ int main()
 
     char codes[128];
     encodeTree(root, codes, 0);
-    char y = 'a';
     printf("\n\nCodes are - ");
+    printf("\nChar\tcode\tsize");
     int resultStrsize = 0;
     int originalStrsize = 0;
-    for (int i = 0; i < 6; i++)
+    for (size_t i = 0; i < 128; i++)
     {
-        char *code = final_encoded_map[(char)y];
-        int l = length(code);
-        resultStrsize += l * freq[i];
-        originalStrsize += 8 * freq[i];
-        printf("\n%c - %s - %d", (char)y, code, l);
-        y++;
+        if (freq[i] != 0)
+        {
+            char *code = final_encoded_map[i];
+            int l = length(code);
+            resultStrsize += l * freq[i];
+            originalStrsize += 8 * freq[i];
+            printf("\n%c\t%s\t%d", (char)i, code, l);
+        }
     }
     double percentage = (double)(originalStrsize - resultStrsize) / (double)originalStrsize * 100;
     printf("\nOriginal size = %d\nCompressed Size = %d\nPercentage = %f", originalStrsize, resultStrsize, percentage);
+    char op_string[strlen(ip_string) * 64];
+    for (size_t i = 0; i < strlen(ip_string); i++)
+    {
+        if (ip_string[i] != '\0')
+        {
+            strcat(op_string, final_encoded_map[(int)ip_string[i]]);
+        }
+    }
+
+    printf("\n\nOriginal String - %s", ip_string);
+    printf("\nFinal String - %s\n", op_string);
 
     return 0;
 }
@@ -218,12 +245,6 @@ TreeNode *encodeText(PriorityQueue *pq)
         leftTempNode->left = min.left;
         leftTempNode->right = min.right;
 
-        // if (rightTempNode->data.c == '\0' && leftTempNode->data.c != '\0')
-        // if (1)
-        // {
-        //     tempNode->left = rightTempNode;
-        //     tempNode->right = leftTempNode;
-        // }
         tempNode->right = rightTempNode;
         tempNode->left = leftTempNode;
         TreeNode temp;
@@ -238,7 +259,7 @@ TreeNode *encodeText(PriorityQueue *pq)
     return root;
 }
 
-void encodeTree(TreeNode *root, char codes[], int codeptr)
+void encodeTree(TreeNode *root, char codes[128], int codeptr)
 {
     if (!root)
         return;
@@ -246,12 +267,12 @@ void encodeTree(TreeNode *root, char codes[], int codeptr)
     {
         int i = 0, j = 0;
         // final_encoded_map[(int)root->data.c] = codes;
-        while (codes[i])
+        while (i < codeptr)
         {
             final_encoded_map[(int)root->data.c][j++] = codes[i++];
         }
 
-        printf("\n%c - %s", root->data.c, codes);
+        // printf("\n%c - %s", root->data.c, codes);
         return;
     }
     if (root->left)
