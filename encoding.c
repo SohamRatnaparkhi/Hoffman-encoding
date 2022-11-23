@@ -30,6 +30,7 @@ TreeNode *encodeText(PriorityQueue *pq);
 void inOrder(TreeNode *root);
 void encodeTree(TreeNode *root, char codes[128], int codeptr);
 int length(char *c);
+void decode_original_str(TreeNode *root, char *encoded_string, char *decoded_string, int i);
 
 char final_encoded_map[128][128];
 
@@ -93,18 +94,24 @@ int main()
     }
     double percentage = (double)(originalStrsize - resultStrsize) / (double)originalStrsize * 100;
     printf("\nOriginal size = %d\nCompressed Size = %d\nPercentage = %f", originalStrsize, resultStrsize, percentage);
-    char op_string[strlen(ip_string) * 64];
+    char encoded_string[strlen(ip_string) * 64];
     for (size_t i = 0; i < strlen(ip_string); i++)
     {
         if (ip_string[i] != '\0')
         {
-            strcat(op_string, final_encoded_map[(int)ip_string[i]]);
+            strcat(encoded_string, final_encoded_map[(int)ip_string[i]]);
         }
     }
 
     printf("\n\nOriginal String - %s", ip_string);
-    printf("\nFinal String - %s\n", op_string);
+    printf("\nEncoder encoding the original string...");
+    printf("\nEncoded String - %s\n", encoded_string);
 
+    printf("\nDecoder decoding the original string...");
+    char decoded_string[1000000];
+    decode_original_str(root, encoded_string, decoded_string, 0);
+    printf("\nDecoded String - %s\n", decoded_string);
+    
     return 0;
 }
 
@@ -294,4 +301,27 @@ void inOrder(TreeNode *root)
     inOrder(root->left);
     printf("\n[%c, %d]", root->data.c, root->data.freq);
     inOrder(root->right);
+}
+
+void decode_original_str(TreeNode *root, char *encoded_string, char *decoded_string, int i)
+{
+    TreeNode *currNode = root;
+    int j = 0;
+    while (i < strlen(encoded_string))
+    {
+        if (encoded_string[i] == '0')
+        {
+            currNode = currNode->left;
+        }
+        else
+        {
+            currNode = currNode->right;
+        }
+        if (!currNode->left && !currNode->right)
+        {
+            decoded_string[j++] = currNode->data.c;
+            currNode = root;
+        }
+        i++;
+    }
 }
