@@ -30,15 +30,16 @@ TreeNode *encodeText(PriorityQueue *pq);
 void inOrder(TreeNode *root);
 void encodeTree(TreeNode *root, char codes[128], int codeptr);
 int length(char *c);
-void decode_original_str(TreeNode *root, char *encoded_string, char *decoded_string, int i);
+void decode_original_str(TreeNode *root, char *encoded_string, char *decoded_string, size_t i);
 
 char final_encoded_map[128][128];
 
 int main()
 {
     int freq[128];
-    char ip_string[100000] = "currently taiking hardcoded chars. Later we will take users's file from i/p, read it and then make corresponding freq char pair tuples.";
-
+    char ip_string[100000] = "";
+    printf("Enter input string - ");
+    scanf("%[^\n]%*c", ip_string);
     for (size_t i = 0; i < 128; i++)
     {
         freq[i] = 0;
@@ -51,6 +52,7 @@ int main()
     }
 
     PriorityQueue *pq = (PriorityQueue *)malloc(sizeof(PriorityQueue));
+    pq->size = 0;
     for (size_t i = 0; i < 128; i++)
     {
         Tuple t;
@@ -95,12 +97,11 @@ int main()
     double percentage = (double)(originalStrsize - resultStrsize) / (double)originalStrsize * 100;
     printf("\nOriginal size = %d\nCompressed Size = %d\nPercentage = %f", originalStrsize, resultStrsize, percentage);
     char encoded_string[strlen(ip_string) * 64];
+    memset(encoded_string, '\0', sizeof(encoded_string));
     for (size_t i = 0; i < strlen(ip_string); i++)
     {
-        if (ip_string[i] != '\0')
-        {
-            strcat(encoded_string, final_encoded_map[(int)ip_string[i]]);
-        }
+        // printf("%c \t %s\n", ip_string[i], final_encoded_map[(int)ip_string[i]]);
+        strcat(encoded_string, final_encoded_map[(int)ip_string[i]]);
     }
 
     printf("\n\nOriginal String - %s", ip_string);
@@ -111,7 +112,8 @@ int main()
     char decoded_string[1000000];
     decode_original_str(root, encoded_string, decoded_string, 0);
     printf("\nDecoded String - %s\n", decoded_string);
-    
+    printf("%d", strcmp(ip_string, (char *)decoded_string));
+
     return 0;
 }
 
@@ -303,7 +305,7 @@ void inOrder(TreeNode *root)
     inOrder(root->right);
 }
 
-void decode_original_str(TreeNode *root, char *encoded_string, char *decoded_string, int i)
+void decode_original_str(TreeNode *root, char *encoded_string, char *decoded_string, size_t i)
 {
     TreeNode *currNode = root;
     int j = 0;
